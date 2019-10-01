@@ -72,9 +72,9 @@ main=function(output1,output2,output3){
   orth_gene_left = orth_gene_left[,c(1,5,7,9)]
   
   
-  output1 = "../Raw_data/geneId_with_MANE.txt"
-  output2 = "../Raw_data/transId_with_MANE.txt"
-  output3 = "../Raw_data/geneId_no_MANE.txt"
+  # output1 = "../Raw_data/geneId_with_MANE.txt"
+  # output2 = "../Raw_data/transId_with_MANE.txt"
+  # output3 = "../Raw_data/geneId_no_MANE.txt"
   
   write.table(orth_gene,output1,quote=FALSE,sep='\t',row.names=F)
   write.table(ref_transcript,output2,quote=FALSE,sep='\t',row.names=F)
