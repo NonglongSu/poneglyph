@@ -11,5 +11,6 @@
 
 
 #The simple count of differences (the Hamming distance) between sequences will 
- often underestimate the number of substitution because of multiple hits (see homoplasy). 
- 
+#often underestimate the number of substitution because of multiple hits (see homoplasy). 
+
+

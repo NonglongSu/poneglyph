@@ -1,4 +1,5 @@
 library(seqinr)
+library(stringr)
 library(Biostrings)
 
 model = function(inDir, trans.set.sorted, dup){
@@ -13,8 +14,8 @@ model = function(inDir, trans.set.sorted, dup){
       score = length(which(geneA=='-'))+length(which(geneB=='-'))
       Score = c(Score,score)
       #hamming distance
-      misMatch = length(which(geneA[geneA != geneB] != '-'))
-      Misma    = c(Misma,misMatch)
+      mismatch = length(which(geneA!='-')) - length(which(geneB=='-')) - length(which(geneA==geneB))
+      Misma    = c(Misma,mismatch)
     }
     trans.set.sorted.split = split(trans.set.sorted,ceiling(seq_along(trans.set.sorted)/dup))
      

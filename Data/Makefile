@@ -9,7 +9,7 @@ default:all
 all: 
 
 .PHONY:default all clean
-.PHONY:homoCall cds_exon_call align_prep align_mafft fhi fhi_parsi
+.PHONY:homoCall cds_exon_call align_prep align_mafft 		exon_loc fhi fhi_parsi fhi_jc69_hmm
 
 namelist:=$(shell ls Align_prep/) 
 
@@ -41,12 +41,19 @@ Align_mafft/%.fa: Align_prep/%.fa
 
 
 ################################################################
+
+#Exon-order-loc determination (Randomly pick one gene)
+exon_loc:../Script/exon_loc_map.R Exon_table/ geneId_cut.txt Results/From/ 
+	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) 
+
+
+
+
+
+
+
+
 #Try different models to find the best homo isoform
-
-#Obtain the homologous isoforms based on #gaps / mismatches
-#fhi:../Script/find_homo_isoform.R geneId_cut.txt Align_mafft/
-#	$(RSCRIPT) $< $(words 2,$^) $(words 3,$^) Results/iso_align.txt
-
 
 fhi:../Script/find_homo_isoform.R ../Script/fhi_gap_sub.R geneId_cut.txt Align_mafft/ 
 	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) Results/iso_align.txt
@@ -55,11 +62,10 @@ fhi:../Script/find_homo_isoform.R ../Script/fhi_gap_sub.R geneId_cut.txt Align_m
 fhi_parsi:../Script/find_homo_isoform.R ../Script/fhi_parsimony.R geneId_cut.txt Align_mafft/ 
 	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) Results/iso_parsi.txt
 
+fhi_jc69_hmm:../Script/find_homo_isoform.R ../Script/fhi_jc69.R geneId_cut.txt Align_mafft/
+	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) Results/iso_jc69_hmm.txt
 
 
 
-
-#Curation
-#Exon-order-mapping  
 
 
