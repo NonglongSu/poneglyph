@@ -1,16 +1,15 @@
 #Do not call ensembl api from server because either: 
-	1)-j divide it into 120 part (too many request)
-	2)previous call block the current call and the server recognize it and block you.
+	1)-j divide it into numberofcores (too many request!!!)
+	2)previous request can block the current call which forces the server recognize and block it.
 
 
 #Ensembl cds excludes: nonsense mediated decay, retained intron.  
-#Ensembl exon can be UTR only.
-#Some exon are so big(>>10000bps).
-#Different transcripts own their distinctive exons as the 5',3' UTR.
-#Averagely, intron are much larger than exon. 
+#Ensembl exon can be UTRs only.
+#Some exons are so big (>>10000bps).
+#Averagely, introns are much larger than exons. 
 
 
-#The simple count of differences (the Hamming distance) between sequences will 
-#often underestimate the number of substitution because of multiple hits (see homoplasy). 
+#The simple count of mismatches (the Hamming distance) between sequences will 
+#often underestimate the number of substitutions because of multiple hits (see homoplasy). 
 
 

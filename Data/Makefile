@@ -54,15 +54,20 @@ exon_loc:../Script/exon_loc_map.R Exon_table/ geneId_cut.txt Results/From/
 
 
 #Try different models to find the best homo isoform
+file=Results/From/geneId.txt
+f1  =Results/From/human_exonId.txt
+f2  =Results/From/human_exonLoc.txt
+f3  =Results/From/chimp_exonId.txt
+f4  =Results/From/chimp_exonLoc.txt
+inD =Align_mafft/
+ouF1=exon_map_ref.fa
+ouF2=exon_map_tes.fa
+ouF3=exon_map.txt
 
-fhi:../Script/find_homo_isoform.R ../Script/fhi_gap_sub.R geneId_cut.txt Align_mafft/ 
-	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) Results/iso_align.txt
+fhi_parsi:../Script/exon_mapping_raw.R ../Script/fhi_parsimony.R $(file) $(f1) $(f2) $(f3) $(f4) $(inD)  
+	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) $(word 5,$^) $(word 6,$^) $(word 7,$^) $(word 8,$^) Results/To/Parsi/$(ouF1) Results/To/Parsi/$(ouF2) Results/To/Parsi/$(ouF3)
 
-
-fhi_parsi:../Script/find_homo_isoform.R ../Script/fhi_parsimony.R geneId_cut.txt Align_mafft/ 
-	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) Results/iso_parsi.txt
-
-fhi_jc69_hmm:../Script/find_homo_isoform.R ../Script/fhi_jc69.R geneId_cut.txt Align_mafft/
+fhi_jc69_hmm:../Script/exon_mapping_raw.R ../Script/fhi_jc69.R geneId_cut.txt Align_mafft/
 	$(RSCRIPT) $< $(word 2,$^) $(word 3,$^) $(word 4,$^) Results/iso_jc69_hmm.txt
 
 
