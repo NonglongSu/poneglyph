@@ -1,4 +1,7 @@
-#extract the gene ID from ensembl database
+# HomoCall
+# Extract the gene ID from ensembl database
+# 1 Argument Required: Outfile Name
+# =========================================
 
 # rm(list=ls())
 # invisible(dev.off())
@@ -24,8 +27,8 @@ library(biomaRt)
 library(readr)
 library(dplyr)
 
-main=function(ouFile){
-  human = useMart("ensembl",dataset="hsapiens_gene_ensembl")
+main = function(ouFile) {
+  human = useMart("ensembl", dataset="hsapiens_gene_ensembl")
   
   # x = listDatasets()                  ## 190 datasets + version
   # y = listAttributes(human)$name
@@ -41,21 +44,23 @@ main=function(ouFile){
   
   Filt = "with_ccds"
   
-  orth = getBM(attributes,filters=Filt, values=list(TRUE), mart = human, uniqueRows=TRUE)
+  orth = getBM(attributes, filters = Filt, values = list(TRUE), mart = human, uniqueRows = TRUE)
   
   #Element-wise comparison single &. 
+<<<<<<< HEAD
   orth_filtered = orth %>% filter(`ptroglodytes_homolog_orthology_type`=="ortholog_one2one")
+=======
+  orth_filtered = orth %>% filter(`ptroglodytes_homolog_orthology_type` == "ortholog_one2one")
+>>>>>>> f6574de58f14f532f4e68afbde9796b9f37a0e93
   
   #Gene with mane transcript
   orth_gene = orth_filtered[,c(1,3)]
   
   # ouFile = "../Data/geneId.txt"
   
-  write.table(orth_gene,ouFile,quote=FALSE,sep='\t',row.names=F,col.names = F)
+  write.table(orth_gene, ouFile, quote = FALSE, sep = '\t', row.names = F, col.names = F)
 }
 
-
-
-args=commandArgs(trailingOnly=TRUE)
+args = commandArgs(trailingOnly = TRUE)
 main(args[1])
 
