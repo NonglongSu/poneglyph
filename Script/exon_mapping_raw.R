@@ -1,6 +1,6 @@
-library(tidyverse)
 library(seqinr)
 library(Biostrings)
+library(tidyverse)
 library(dplyr)   #bind_rows
 #setwd("~/Dropbox (ASU)/poneglyph/Script")
 
@@ -140,6 +140,7 @@ ouF3  = "../Data/Results/To/Parsi/exon_map.txt"
 main = function(Rscr,file,f1,f2,f3,f4,inDir,ouF1,ouF2,ouF3){
   
   source(Rscr)
+  source("fhi_jc69.R")
   #source("fhi_parsimony.R")
   
   Dir <<- inDir
@@ -154,24 +155,23 @@ main = function(Rscr,file,f1,f2,f3,f4,inDir,ouF1,ouF2,ouF3){
   
   #Extract all transcripts from that specific gene
   mRNA.set       = list.files(path=Dir,pattern=paste0(gene.stem))
-  mRNA.sorted    =  mRNA.set[order(regmatches(mRNA.set,regexpr("[0-9]_", mRNA.set)))]
-  mRNA.sorted    =  mRNA.sorted[order(nchar(mRNA.sorted),mRNA.sorted)]
+  mRNA.sorted    = mRNA.set[order(regmatches(mRNA.set,regexpr("[0-9]_", mRNA.set)))]
+  mRNA.sorted    = mRNA.sorted[order(nchar(mRNA.sorted),mRNA.sorted)]
   dup            = rle(gsub("(_).*","", mRNA.sorted))[1][[1]][1] 
   mRNA.sorted.sp = split(mRNA.sorted,ceiling(seq_along(mRNA.sorted)/dup))       #18
   #
   h.Loc   = lapply(h.exoLoc, function(x){as.numeric(str_split(x," ")[[1]])})    #18
   c.Loc   = lapply(c.exoLoc, function(x){as.numeric(str_split(x," ")[[1]])})    #9
-  #
+  #chimp Id
   c.Id.sp = split(c.exoId$Exon,factor(c.exoId$Transcript,levels=unique(c.exoId$Transcript)) )   #9 
   
-  #h.Loc.Bset = list() 
   Recom.mRNA1 = list()
   Recom.mRNA2 = list()
   Recom.Id    = list()
   for (i in 1:length(mRNA.sorted.sp)) {
-    Loc.set = Uplocate(mRNA.sorted.sp[[i]],h.Loc[[i]])   #ref exon loc
+    Loc.set = Uplocate(mRNA.sorted.sp[[i]],h.Loc[[i]])   #ref exon loc -> 9
     #parsimony, JC69, ...
-    flag  = 1 
+    Flag  = 1 
     recom.mRNA1 = c()
     recom.mRNA2 = c()
     recom.Id   = list()
@@ -179,13 +179,13 @@ main = function(Rscr,file,f1,f2,f3,f4,inDir,ouF1,ouF2,ouF3){
     for (j in 1:length(Index)) {
       mRNA.Id = mRNA.sorted.sp[[i]][Index[j]] #This transcript owns the best exon
       Loc.Id  = Loc.set[[Index[j]]][j]        #The order of the exon
-      mRNAplusId = RecovermRNA(mRNA.Id, Loc.Id, flag, c.Id.sp[[Index[j]]], c.Loc[[Index[j]]])
+      mRNAplusId = RecovermRNA(mRNA.Id, Loc.Id, Flag, c.Id.sp[[Index[j]]], c.Loc[[Index[j]]])
       #
       recom.mRNA1    = paste0(recom.mRNA1,mRNAplusId[[1]],sep="",collapse = NULL)
       recom.mRNA2    = paste0(recom.mRNA2,mRNAplusId[[2]],sep="",collapse = NULL)
       recom.Id[[j]]  = mRNAplusId[[3]]
       #
-      flag = Loc.set[[Index[j+1]]][j] + 1     #The flag always has to be the recent one. 
+      Flag = Loc.set[[Index[j+1]]][j] + 1     #The flag always has to be the recent one. 
       }
     Recom.mRNA1[[i]] = recom.mRNA1
     Recom.mRNA2[[i]] = recom.mRNA2

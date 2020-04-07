@@ -1,8 +1,8 @@
-#Consecutive indels are treated as a single event. 
-#MP method
-library(seqinr)
+# Consecutive indels are treated as a single event originally. 
+# MP method
 library(stringr)
-library(Biostrings)
+# library(seqinr)
+# library(Biostrings)
 
 s_map = function(gene){
   H_state = c()
