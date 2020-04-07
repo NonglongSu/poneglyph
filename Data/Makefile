@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 ##Pretest
 RSCRIPT = Rscript --vanilla
 MAFFT = ginsi --preservecase

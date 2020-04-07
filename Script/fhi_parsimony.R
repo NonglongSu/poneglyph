@@ -3,83 +3,96 @@
 library(seqinr)
 library(stringr)
 library(Biostrings)
+library(foreach)
+library(doParallel)
 
-s_map = function(gene){
+s_map = function(gene) {
   H_state = c()
   for (k in 1:length(gene)) {
-    if(grepl("-",gene[k])){#indels
+    if (grepl("-", gene[k])) { 
+      #indels
       h_state = 0
-    }else{#subs
+    } else {
+      #subs
       h_state = 1
     }
-    H_state = c(H_state,h_state)
+    H_state = c(H_state, h_state)
   }
   val = length(rle(H_state)$values)
   return(val)
 }
 
-p_score = function(geneA,geneB){
-  geneA.1 = DNAStringSet(paste0(geneA,collapse = ""),use.names = FALSE)
-  geneB.1 = DNAStringSet(paste0(geneB,collapse = ""),use.names = FALSE)
+p_score = function(geneA, geneB) {
+  geneA.1 = DNAStringSet(paste0(geneA,collapse = ""), use.names = FALSE)
+  geneB.1 = DNAStringSet(paste0(geneB,collapse = ""), use.names = FALSE)
   
-  indel  = lapply(str_split(c(geneA.1,geneB.1),''),function(x){IRanges(x=='-')}) 
-  indels = sum(unlist(lapply(IRangesList(indel),function(x){length(x)})))
-  #Hamming distance
-  subs  = length(which(geneA!='-')) - length(which(geneB=='-')) - length(which(geneA==geneB))
-  score = sum(indels,subs)
+  indel  = lapply(str_split(c(geneA.1, geneB.1), ''), function(x){IRanges(x == '-')}) 
+  indels = sum(unlist(lapply(IRangesList(indel), function(x){length(x)})))
+  # Hamming distance
+  subs  = length(which(geneA != '-')) - length(which(geneB == '-')) - length(which(geneA == geneB))
+  score = sum(indels, subs)
   return(score)
 }
 
-model = function(mRNA, Loc.set){
+model = function(mRNA, Loc.set) {
   
-  #Cal. the score of multiple pairwise alignment and select the winner. 
-  flag  =  rep(1,length(mRNA)) #accumulation flag
+  # Cal. the score of multiple pairwise alignment and select the winner. 
+  flag  =  rep(1, length(mRNA)) #accumulation flag
   Index =  c()
-  for(i in 1:length(Loc.set[[1]])){
+  
+  # Start Parallelization
+  numCores <- detectCores()
+  registerDoParallel(numCores)
+
+  foreach (i = 1:length(Loc.set[[1]])) %dopar% {
     loc.i = unlist(lapply(Loc.set,`[[`,i), use.names = FALSE)
-    Score = c()
+    score = c()
     for (j in 1:length(mRNA)) {
-      dna   = readDNAStringSet(paste0(Dir,mRNA[j]),format = "fasta")
+      dna   = readDNAStringSet(paste0(Dir, mRNA[j]), format = "fasta")
       #Extract the exon 
       geneA = str_split(dna[[1]],"")[[1]][flag[j]:loc.i[j]]
       geneB = str_split(dna[[2]],"")[[1]][flag[j]:loc.i[j]]
       
-      if(('-' %in% geneA) || ('-' %in% geneB) ){
-        if(all(geneA == '-') || all(geneB == '-') ){#alternative splicing NNNNNN/------ or ------/NNNNNN
+      if (('-' %in% geneA) || ('-' %in% geneB) ) {
+        if (all(geneA == '-') || all(geneB == '-') ) {
+          #alternative splicing NNNNNN/------ or ------/NNNNNN
           score = Inf
-        }else{
+        } else {
           valA = s_map(geneA)
           valB = s_map(geneB)
-          #Rule1--gaps exist before(after) the exon in ref.
-          if(valA==2){#Only one consecutive gaps
-            geneA.upd = geneA[which(geneA!='-')]
-            geneB.upd = geneB[which(geneA!='-')]
-            if(all(geneB.upd == '-')){#alternative splicing ---NNN/NNN---
+          #Rule 1 -- gaps exist before(after) the exon in ref.
+          if (valA == 2){
+            #Only one consecutive gaps
+            geneA.upd = geneA[which(geneA != '-')]
+            geneB.upd = geneB[which(geneA != '-')]
+            if (all(geneB.upd == '-')){#alternative splicing ---NNN/NNN---
               score = Inf
-            }else{#partial overlap ---NNN/NNNNNN
-              score = p_score(geneA.upd,geneB.upd)
+            } else {
+              #partial overlap ---NNN/NNNNNN
+              score = p_score(geneA.upd, geneB.upd)
             }
-          }else{
-              #Rule2--gaps exist before(after) the exon in target (treat them as individual indel events)
-              if(valA==1 && valB==2){#NNNNNN/-----N or NNNNNN/NNNNN-
-                pScore = p_score(geneA,geneB)
-                gaps   = length(which(geneB=='-'))
+          } else {
+              # Rule 2 -- gaps exist before (after) the exon in target (treat them as individual indel events)
+              if (valA == 1 && valB == 2){
+                #NNNNNN/-----N or NNNNNN/NNNNN-
+                pScore = p_score(geneA, geneB)
+                gaps   = length(which(geneB == '-'))
                 score  = pScore + gaps - 1
-              }else{
-                score = p_score(geneA,geneB)
+              } else {
+                score = p_score(geneA, geneB)
             }
           }
         }
       #Only substitutions occur.
-      }else{
-        score = p_score(geneA,geneB)
+      } else {
+        score = p_score(geneA, geneB)
       }
       #Record each score.
-      Score = c(Score,score)
+      Score = c(Score, score)
     }
     #Find where the best exon from.
-    index = which(min(Score)==Score)[1]   #Randomly pick one hit for now. (ignore the 'duplicated gene' assumption)
-    Index = c(Index,index)
+    index = which(min(Score) == Score)[1]   #Randomly pick one hit for now. (ignore the 'duplicated gene' assumption)
+    Index = c(Index, index)
     #update the flag
     flag  = unlist(lapply(Loc.set,`[[`,i), use.names = FALSE) + 1 
   }
