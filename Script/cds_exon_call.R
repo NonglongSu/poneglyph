@@ -48,6 +48,7 @@ main = function(Name1,Name2){
    
     output1="../Data/cds/"
     output2="../Data/Exon_table/"
+    
     write.table(cds.list,paste0(output1,name,".fa"),quote = FALSE,
                 row.names=FALSE,col.names = FALSE,append = FALSE,sep = "\n")
     write.table(df,paste0(output2,name,".txt"),quote = FALSE,

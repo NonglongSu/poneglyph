@@ -141,7 +141,7 @@ main = function(Rscr,file,f1,f2,f3,f4,inDir,ouF1,ouF2,ouF3){
   
   source(Rscr)
   source("fhi_jc69.R")
-  #source("fhi_parsimony.R")
+  source("fhi_parsimony.R")
   
   Dir <<- inDir
   #read from the homo-geneId file

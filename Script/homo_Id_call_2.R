@@ -44,7 +44,7 @@ main=function(ouFile){
   orth = getBM(attributes,filters=Filt, values=list(TRUE), mart = human, uniqueRows=TRUE)
   
   #Element-wise comparison single &. 
-  orth_filtered = orth %>% filter(`marmatus_homolog_orthology_type`=="ortholog_one2one")
+  orth_filtered = orth %>% filter(`ptroglodytes_homolog_orthology_type`=="ortholog_one2one")
   
   #Gene with mane transcript
   orth_gene = orth_filtered[,c(1,3)]
