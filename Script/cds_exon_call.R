@@ -47,22 +47,12 @@ main = function(Name1, Name2) {
     exon.lt = Filter(Negate(is.null), exon.list)
     df = do.call(rbind, Map(data.frame, Transcript = id_trans, Exon = exon.lt))
    
-<<<<<<< HEAD
-    output1="../Data/cds/"
-    output2="../Data/Exon_table/"
-    
-    write.table(cds.list,paste0(output1,name,".fa"),quote = FALSE,
-                row.names=FALSE,col.names = FALSE,append = FALSE,sep = "\n")
-    write.table(df,paste0(output2,name,".txt"),quote = FALSE,
-                row.names=FALSE,col.names = TRUE,append = FALSE,sep = "\t")
-=======
     output1 = "../Data/cds/"
     output2 = "../Data/Exon_table/"
     write.table(cds.list, paste0(output1,name, ".fa"), quote = FALSE,
                 row.names=FALSE, col.names = FALSE, append = FALSE, sep = "\n")
     write.table(df, paste0(output2,name,".txt"),quote = FALSE,
                 row.names=FALSE, col.names = TRUE, append = FALSE, sep = "\t")
->>>>>>> f6574de58f14f532f4e68afbde9796b9f37a0e93
   }
 }
 
