@@ -1,4 +1,6 @@
 # Poneglyph
+Piecing all exons together to form an **imaginary isoform** is a "fairytale".  
+This fairytale will come true in our **Poneglyph** project, just like piecing all stories together to form a "One piece". 
 
 ## Requirements
 * R 3.4.4
