@@ -70,8 +70,7 @@ model = function(mRNA, Loc.set){
             }
           }
         }
-      #Only substitutions occur.
-      }else{
+      }else{ # Only substitutions occur.
         score = p_score(geneA,geneB)
       }
       #Record each score.
