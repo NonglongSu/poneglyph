@@ -1,0 +1,21 @@
+#Do not call ensembl api from server because either: 
+	1)-j divide it into number_of_cores (too many request!!!)
+	2)previous request can block the current call which forces the server to recognize and block.
+
+
+#Ensembl cds excludes: nonsense mediated decay, retained intron.  
+#Ensembl exons can be UTRs only.
+#Ensembl API species name acronym: H.saps-P.tro 
+#Ensembl genes have multiple version(transcripts) of transcripts. 
+#Some exons are so big (>>10000bps).
+#Averagely, introns are much larger than exons. 
+#A cds can start from different exons.
+#A cds can cannot have more than one exon containing the stop codon.
+#On average, there are 8.8 exons and 7.8 introns per gene. About 80% of the exons on each chromosome are < 200 bp in length. 
+
+
+#The simple count of mismatches (the Hamming distance) between sequences will often underestimate the number of substitutions because of multiple hits (see homoplasy). 
+
+#The evolutionary models such as (JC69, K80) assume that different sites evolve independently and are identically distributed. But since we chose the cds so it might violate the neutral assumption.  
+
+#The overlaps of more than one exon could be due to the exon excision&insertion in the past. 
