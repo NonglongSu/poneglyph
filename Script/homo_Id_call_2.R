@@ -1,17 +1,12 @@
 # HomoCall
 # Extract the gene ID from ensembl database
-# 1 Argument Required: Outfile Name
+# 1 Argument Required: geneId
 # =========================================
 
 # rm(list=ls())
 # invisible(dev.off())
 
-# source("http://bioconductor.org/biocLite.R")
-# biocLite("BiocInstaller")
-# biocLite("Biostrings")
-# biocLite("biomaRt")
-# biocLite("S4Vectors")
-# biocLite("BiocGenerics")
+# BiocManager::install("BiocGenerics") # R 4.0.0
 # install.packages("readr")
 # install.packages("dplyr")
 # sessionInfo()                // show the version of packages & R
@@ -19,7 +14,6 @@
 
 #setwd("~/Dropbox (ASU)/poneglyph/Script")
 
-library(BiocInstaller)
 library(BiocGenerics)
 library(S4Vectors)
 library(Biostrings)
@@ -43,7 +37,6 @@ main = function(ouFile) {
   
   
   Filt = "with_ccds"
-  
   orth = getBM(attributes, filters = Filt, values = list(TRUE), mart = human, uniqueRows = TRUE)
   
   #Element-wise comparison single &. 
