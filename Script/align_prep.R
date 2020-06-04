@@ -10,7 +10,7 @@ library(doParallel)
 
 #setwd("~/Dropbox (ASU)/poneglyph/Script")
 
-# inFile = "../Data/geneId_cut.txt"
+# inFile = "../Data/geneId_update.txt"
 # inDir  = "../Data/cds/"
 # ouDir  = "../Data/Align_prep/"
 
