@@ -1,6 +1,6 @@
 # Use jukes cantor + HMM
 # ML method
-# Indel emission via geometrix method
+# Indel emission via geometric method
 
 library(Matrix)
 library(stringr)
@@ -9,28 +9,28 @@ library(doParallel)
 s_map = function(gene){
   H_state = c()
   for (k in 1:length(gene)) {
-    if(grepl("-",gene[k])){#indels
+    if(grepl("-", gene[k])){#indels
       h_state = 0
     }else{#subs
       h_state = 1
     }
-    H_state = c(H_state,h_state)
+    H_state = c(H_state, h_state)
   }
   val = length(rle(H_state)$values)
   return(val)
 }
 
-obs_map = function(seq1,seq2,B){
+obs_map = function(seq1, seq2, B){
   obs_prob = 1
   for (k in 1:length(seq1)) {
-    hit = paste0(c(seq1[k],seq2[k]),collapse = "")
-    if(grepl("-",hit)){# indel state
-      obs_prob = obs_prob * B[5,1]
+    hit = paste0(c(seq1[k], seq2[k]), collapse = "")
+    if(grepl("-", hit)){# indel state
+      obs_prob = obs_prob * B[5, 1]
     }else{# substitution state
-      if(grepl("AA|GG|CC|TT",hit)){
-        obs_prob = obs_prob * B[1,1]              # B[1,1] = B[2,2] = B[3,3] = B[4,4].
+      if(grepl("AA|GG|CC|TT", hit)){
+        obs_prob = obs_prob * B[1, 1]              # B[1,1] = B[2,2] = B[3,3] = B[4,4].
       }else{
-        obs_prob = obs_prob * B[1,2]              # The rest value are identical.
+        obs_prob = obs_prob * B[1, 2]              # The rest value are identical.
       }
     }
   }
@@ -38,7 +38,7 @@ obs_map = function(seq1,seq2,B){
 }
 
 jc69_hmm = function(geneA,geneB,Q,I){
-  # number of mismatches
+  # number of subs
   subs   = length(which(geneA != '-')) - length(which(geneB == '-')) 
   # number of indels
   exon.dna = DNAStringSet(c(paste0(geneA,collapse = ""),paste0(geneB,collapse = "")))
@@ -79,8 +79,8 @@ jc69_hmm = function(geneA,geneB,Q,I){
   if(Ds >= 0.75 ){# the limitation of the JC model.
     return(Inf)
   }else{
-    t  = -(3/4)*log((1-4/3*Ds),exp(1))                    # t = -(3/4)*ln(1-3/4*P_distance)
-    P  = expm(Q * t)                                      # cal the branch length and the P matrix (substitution)
+    d  = -(3/4)*log((1-4/3*Ds),exp(1))                    # d = -(3/4)*ln(1-3/4*P_distance)
+    P  = expm(Q * d)                                      # cal the branch length and the P matrix (substitution)
     emission_matrix = rbind(P, I)                      
     
     # Cal. the product of the observed prob.
